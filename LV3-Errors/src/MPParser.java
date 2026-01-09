@@ -233,7 +233,7 @@ public class MPParser extends java_cup.runtime.lr_parser {
    
    public int getLine()
    {
-   	  return (( MPLexer) getScanner()).getLine() + 1;
+   	  return (( MPLexer) getScanner()).getLine() - 1;
    }
 
 
@@ -297,7 +297,7 @@ class CUP$MPParser$actions {
           case 3: // Program ::= PROGRAM error 
             {
               Object RESULT =null;
-		 System.out.println( "! Greska ! u liniji " + parser.getLine() + ": " + "Telo programa je nekorektno."); parser.errNo++; 
+		 System.out.println(  "-> Greska u liniji " + parser.getLine() + ": " + "Telo programa je nekorektno."); parser.errNo++; 
               CUP$MPParser$result = parser.getSymbolFactory().newSymbol("Program",0, ((java_cup.runtime.Symbol)CUP$MPParser$stack.elementAt(CUP$MPParser$top-1)), ((java_cup.runtime.Symbol)CUP$MPParser$stack.peek()), RESULT);
             }
           return CUP$MPParser$result;
@@ -306,7 +306,7 @@ class CUP$MPParser$actions {
           case 4: // Program ::= error 
             {
               Object RESULT =null;
-		 System.out.println( "! Greska ! u liniji " + parser.getLine() + ": " + "Nedostaje kljucna rec 'program' na pocetku."); parser.errNo++; 
+		 System.out.println(  "-> Greska u liniji " + parser.getLine() + ": " + "Nedostaje kljucna rec 'program' na pocetku."); parser.errNo++; 
               CUP$MPParser$result = parser.getSymbolFactory().newSymbol("Program",0, ((java_cup.runtime.Symbol)CUP$MPParser$stack.peek()), ((java_cup.runtime.Symbol)CUP$MPParser$stack.peek()), RESULT);
             }
           return CUP$MPParser$result;
@@ -324,7 +324,7 @@ class CUP$MPParser$actions {
           case 6: // Block ::= BEGIN Variables StatementList error 
             {
               Object RESULT =null;
-		 System.out.println( "! Greska ! u liniji " + parser.getLine() + ": " + "Nezavrsen blok (nedostaje kljucna rec 'end')."); parser.errNo++; 
+		 System.out.println(  "-> Greska u liniji " + parser.getLine() + ": " + "Nezavrsen blok (nedostaje kljucna rec 'end')."); parser.errNo++; 
               CUP$MPParser$result = parser.getSymbolFactory().newSymbol("Block",1, ((java_cup.runtime.Symbol)CUP$MPParser$stack.elementAt(CUP$MPParser$top-3)), ((java_cup.runtime.Symbol)CUP$MPParser$stack.peek()), RESULT);
             }
           return CUP$MPParser$result;
@@ -342,7 +342,7 @@ class CUP$MPParser$actions {
           case 8: // Variables ::= Variables error 
             {
               Object RESULT =null;
-		 System.out.println( "! Greska ! u liniji " + parser.getLine() + ": " + "Nedostaje deklaracija za promenjive"); parser.errNo++; 
+		 System.out.println(  "-> Greska u liniji " + parser.getLine() + ": " + "Nedostaje deklaracija za promenjive"); parser.errNo++; 
               CUP$MPParser$result = parser.getSymbolFactory().newSymbol("Variables",2, ((java_cup.runtime.Symbol)CUP$MPParser$stack.elementAt(CUP$MPParser$top-1)), ((java_cup.runtime.Symbol)CUP$MPParser$stack.peek()), RESULT);
             }
           return CUP$MPParser$result;
@@ -369,7 +369,7 @@ class CUP$MPParser$actions {
           case 11: // Declaration ::= NameList COLON Type error 
             {
               Object RESULT =null;
-		 System.out.println( "! Greska ! u liniji " + parser.getLine() + ": " + "Nedostaje ';'."); parser.errNo++; 
+		 System.out.println(  "-> Greska u liniji " + parser.getLine() + ": " + "Nedostaje ';'."); parser.errNo++; 
               CUP$MPParser$result = parser.getSymbolFactory().newSymbol("Declaration",3, ((java_cup.runtime.Symbol)CUP$MPParser$stack.elementAt(CUP$MPParser$top-3)), ((java_cup.runtime.Symbol)CUP$MPParser$stack.peek()), RESULT);
             }
           return CUP$MPParser$result;
@@ -378,7 +378,7 @@ class CUP$MPParser$actions {
           case 12: // Declaration ::= NameList COLON error 
             {
               Object RESULT =null;
-		 System.out.println( "! Greska ! u liniji " + parser.getLine() + ": " + "Nedostaje tip promenjive."); parser.errNo++; 
+		 System.out.println(  "-> Greska u liniji " + parser.getLine() + ": " + "Nedostaje tip promenjive."); parser.errNo++; 
               CUP$MPParser$result = parser.getSymbolFactory().newSymbol("Declaration",3, ((java_cup.runtime.Symbol)CUP$MPParser$stack.elementAt(CUP$MPParser$top-2)), ((java_cup.runtime.Symbol)CUP$MPParser$stack.peek()), RESULT);
             }
           return CUP$MPParser$result;
@@ -387,7 +387,7 @@ class CUP$MPParser$actions {
           case 13: // Declaration ::= NameList error 
             {
               Object RESULT =null;
-		 System.out.println( "! Greska ! u liniji " + parser.getLine() + ": " + "Nedostaje ',' ili ':'."); parser.errNo++; 
+		 System.out.println(  "-> Greska u liniji " + parser.getLine() + ": " + "Nedostaje ',' ili ':'."); parser.errNo++; 
               CUP$MPParser$result = parser.getSymbolFactory().newSymbol("Declaration",3, ((java_cup.runtime.Symbol)CUP$MPParser$stack.elementAt(CUP$MPParser$top-1)), ((java_cup.runtime.Symbol)CUP$MPParser$stack.peek()), RESULT);
             }
           return CUP$MPParser$result;
@@ -405,7 +405,7 @@ class CUP$MPParser$actions {
           case 15: // NameList ::= NameList COMMA error 
             {
               Object RESULT =null;
-		 System.out.println( "! Greska ! u liniji " + parser.getLine() + ": " + "Nevalidan ID promenjive"); parser.errNo++; 
+		 System.out.println(  "-> Greska u liniji " + parser.getLine() + ": " + "Nevalidan ID promenjive"); parser.errNo++; 
               CUP$MPParser$result = parser.getSymbolFactory().newSymbol("NameList",4, ((java_cup.runtime.Symbol)CUP$MPParser$stack.elementAt(CUP$MPParser$top-2)), ((java_cup.runtime.Symbol)CUP$MPParser$stack.peek()), RESULT);
             }
           return CUP$MPParser$result;
@@ -495,7 +495,7 @@ class CUP$MPParser$actions {
           case 25: // Statement ::= ID ASSIGN Expression error 
             {
               Object RESULT =null;
-		 System.out.println( "! Greska ! u liniji " + parser.getLine() + ": " + "Nedostaje ';'"); parser.errNo++; 
+		 System.out.println(  "-> Greska u liniji " + parser.getLine() + ": " + "Nedostaje ';'"); parser.errNo++; 
               CUP$MPParser$result = parser.getSymbolFactory().newSymbol("Statement",7, ((java_cup.runtime.Symbol)CUP$MPParser$stack.elementAt(CUP$MPParser$top-3)), ((java_cup.runtime.Symbol)CUP$MPParser$stack.peek()), RESULT);
             }
           return CUP$MPParser$result;
@@ -504,7 +504,7 @@ class CUP$MPParser$actions {
           case 26: // Statement ::= ID ASSIGN error 
             {
               Object RESULT =null;
-		 System.out.println( "! Greska ! u liniji " + parser.getLine() + ": " + "Potreban je izraz sa desne strane ':=' simbola."); parser.errNo++; 
+		 System.out.println(  "-> Greska u liniji " + parser.getLine() + ": " + "Potreban je izraz sa desne strane ':=' simbola."); parser.errNo++; 
               CUP$MPParser$result = parser.getSymbolFactory().newSymbol("Statement",7, ((java_cup.runtime.Symbol)CUP$MPParser$stack.elementAt(CUP$MPParser$top-2)), ((java_cup.runtime.Symbol)CUP$MPParser$stack.peek()), RESULT);
             }
           return CUP$MPParser$result;
@@ -531,7 +531,7 @@ class CUP$MPParser$actions {
           case 29: // SelectStatement ::= SELECT BEGIN CaseList error 
             {
               Object RESULT =null;
-		 System.out.println( "! Greska ! u liniji " + parser.getLine() + ": " + "Nezavrsen 'select' izraz (nedostaje kljucna rec 'end')."); parser.errNo++; 
+		 System.out.println(  "-> Greska u liniji " + parser.getLine() + ": " + "Nezavrsen 'select' izraz (nedostaje kljucna rec 'end')."); parser.errNo++; 
               CUP$MPParser$result = parser.getSymbolFactory().newSymbol("SelectStatement",8, ((java_cup.runtime.Symbol)CUP$MPParser$stack.elementAt(CUP$MPParser$top-3)), ((java_cup.runtime.Symbol)CUP$MPParser$stack.peek()), RESULT);
             }
           return CUP$MPParser$result;
@@ -540,7 +540,7 @@ class CUP$MPParser$actions {
           case 30: // SelectStatement ::= SELECT BEGIN error 
             {
               Object RESULT =null;
-		 System.out.println( "! Greska ! u liniji " + parser.getLine() + ": " + "Nevalidan slucaj u 'select' izrazu."); parser.errNo++; 
+		 System.out.println(  "-> Greska u liniji " + parser.getLine() + ": " + "Nevalidan slucaj u 'select' izrazu."); parser.errNo++; 
               CUP$MPParser$result = parser.getSymbolFactory().newSymbol("SelectStatement",8, ((java_cup.runtime.Symbol)CUP$MPParser$stack.elementAt(CUP$MPParser$top-2)), ((java_cup.runtime.Symbol)CUP$MPParser$stack.peek()), RESULT);
             }
           return CUP$MPParser$result;
@@ -549,7 +549,7 @@ class CUP$MPParser$actions {
           case 31: // SelectStatement ::= SELECT error 
             {
               Object RESULT =null;
-		 System.out.println( "! Greska ! u liniji " + parser.getLine() + ": " + "Lose zapocet 'select' izraz (nedostaje kljucna rec 'begin')."); parser.errNo++; 
+		 System.out.println(  "-> Greska u liniji " + parser.getLine() + ": " + "Lose zapocet 'select' izraz (nedostaje kljucna rec 'begin')."); parser.errNo++; 
               CUP$MPParser$result = parser.getSymbolFactory().newSymbol("SelectStatement",8, ((java_cup.runtime.Symbol)CUP$MPParser$stack.elementAt(CUP$MPParser$top-1)), ((java_cup.runtime.Symbol)CUP$MPParser$stack.peek()), RESULT);
             }
           return CUP$MPParser$result;
@@ -585,7 +585,7 @@ class CUP$MPParser$actions {
           case 35: // Case ::= CASE Expression THEN error 
             {
               Object RESULT =null;
-		 System.out.println( "! Greska ! u liniji " + parser.getLine() + ": " + "Nevalidan izraz sa desne strane slucaja."); parser.errNo++; 
+		 System.out.println(  "-> Greska u liniji " + parser.getLine() + ": " + "Nevalidan izraz sa desne strane slucaja."); parser.errNo++; 
               CUP$MPParser$result = parser.getSymbolFactory().newSymbol("Case",10, ((java_cup.runtime.Symbol)CUP$MPParser$stack.elementAt(CUP$MPParser$top-3)), ((java_cup.runtime.Symbol)CUP$MPParser$stack.peek()), RESULT);
             }
           return CUP$MPParser$result;
@@ -594,7 +594,7 @@ class CUP$MPParser$actions {
           case 36: // Case ::= CASE Expression error 
             {
               Object RESULT =null;
-		 System.out.println( "! Greska ! u liniji " + parser.getLine() + ": " + "Nedostaje '=>'"); parser.errNo++; 
+		 System.out.println(  "-> Greska u liniji " + parser.getLine() + ": " + "Nedostaje '=>'"); parser.errNo++; 
               CUP$MPParser$result = parser.getSymbolFactory().newSymbol("Case",10, ((java_cup.runtime.Symbol)CUP$MPParser$stack.elementAt(CUP$MPParser$top-2)), ((java_cup.runtime.Symbol)CUP$MPParser$stack.peek()), RESULT);
             }
           return CUP$MPParser$result;
@@ -603,7 +603,7 @@ class CUP$MPParser$actions {
           case 37: // Case ::= CASE error 
             {
               Object RESULT =null;
-		 System.out.println( "! Greska ! u liniji " + parser.getLine() + ": " + "Nevalidan izraz u slucaju."); parser.errNo++; 
+		 System.out.println(  "-> Greska u liniji " + parser.getLine() + ": " + "Nevalidan izraz u slucaju."); parser.errNo++; 
               CUP$MPParser$result = parser.getSymbolFactory().newSymbol("Case",10, ((java_cup.runtime.Symbol)CUP$MPParser$stack.elementAt(CUP$MPParser$top-1)), ((java_cup.runtime.Symbol)CUP$MPParser$stack.peek()), RESULT);
             }
           return CUP$MPParser$result;

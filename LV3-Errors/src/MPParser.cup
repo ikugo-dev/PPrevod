@@ -36,7 +36,7 @@ parser code {:
    
    public int getLine()
    {
-   	  return (( MPLexer) getScanner()).getLine() + 1;
+   	  return (( MPLexer) getScanner()).getLine() - 1;
    }
 :};
 
@@ -71,20 +71,20 @@ Program ::= PROGRAM Block PERIOD
             | PROGRAM Block error
             {: System.out.println( "Nedostaje '.' na kraju programa" ); parser.errNo++; :} 
             | PROGRAM error
-            {: System.out.println( "! Greska ! u liniji " + parser.getLine() + ": " + "Telo programa je nekorektno."); parser.errNo++; :}
+            {: System.out.println(  "-> Greska u liniji " + parser.getLine() + ": " + "Telo programa je nekorektno."); parser.errNo++; :}
             | error
-            {: System.out.println( "! Greska ! u liniji " + parser.getLine() + ": " + "Nedostaje kljucna rec 'program' na pocetku."); parser.errNo++; :};
+            {: System.out.println(  "-> Greska u liniji " + parser.getLine() + ": " + "Nedostaje kljucna rec 'program' na pocetku."); parser.errNo++; :};
 //------------------------------------------------------------------------------
 Block ::= BEGIN Variables StatementList END 
             {: System.out.println( "Redukcija 2:  Block ::= BEGIN Variables StatementList END " ); :}
             | BEGIN Variables StatementList error 
-            {: System.out.println( "! Greska ! u liniji " + parser.getLine() + ": " + "Nezavrsen blok (nedostaje kljucna rec 'end')."); parser.errNo++; :};
+            {: System.out.println(  "-> Greska u liniji " + parser.getLine() + ": " + "Nezavrsen blok (nedostaje kljucna rec 'end')."); parser.errNo++; :};
 
 //------------------------------------------------------------------------------
 Variables ::= Variables Declaration
             {: System.out.println( "Redukcija 3:  Variables ::= Variables Declaration" ); :}
             | Variables error
-            {: System.out.println( "! Greska ! u liniji " + parser.getLine() + ": " + "Nedostaje deklaracija za promenjive"); parser.errNo++; :}
+            {: System.out.println(  "-> Greska u liniji " + parser.getLine() + ": " + "Nedostaje deklaracija za promenjive"); parser.errNo++; :}
             | // ε 
             {: System.out.println( "Redukcija 4:  Variables ::= ε " ); :};
 
@@ -92,17 +92,17 @@ Variables ::= Variables Declaration
 Declaration ::= NameList COLON Type SEMICOLON 
             {: System.out.println( "Redukcija 5:  Declaration ::= NameList COLON Type SEMICOLON " ); :}
             | NameList COLON Type error  
-            {: System.out.println( "! Greska ! u liniji " + parser.getLine() + ": " + "Nedostaje ';'."); parser.errNo++; :}
+            {: System.out.println(  "-> Greska u liniji " + parser.getLine() + ": " + "Nedostaje ';'."); parser.errNo++; :}
             | NameList COLON error  
-            {: System.out.println( "! Greska ! u liniji " + parser.getLine() + ": " + "Nedostaje tip promenjive."); parser.errNo++; :}
+            {: System.out.println(  "-> Greska u liniji " + parser.getLine() + ": " + "Nedostaje tip promenjive."); parser.errNo++; :}
             | NameList error  
-            {: System.out.println( "! Greska ! u liniji " + parser.getLine() + ": " + "Nedostaje ',' ili ':'."); parser.errNo++; :};
+            {: System.out.println(  "-> Greska u liniji " + parser.getLine() + ": " + "Nedostaje ',' ili ':'."); parser.errNo++; :};
 
 //------------------------------------------------------------------------------
 NameList ::= NameList COMMA ID
             {: System.out.println( "Redukcija 6:  NameList ::= NameList COMMA ID" ); :}
             | NameList COMMA error
-            {: System.out.println( "! Greska ! u liniji " + parser.getLine() + ": " + "Nevalidan ID promenjive"); parser.errNo++; :}
+            {: System.out.println(  "-> Greska u liniji " + parser.getLine() + ": " + "Nevalidan ID promenjive"); parser.errNo++; :}
             | ID 
             {: System.out.println( "Redukcija 7:  NameList ::= ID " ); :};
 
@@ -128,9 +128,9 @@ Statement ::= SelectStatement
             | ID ASSIGN Expression SEMICOLON
             {: System.out.println( "Redukcija 15: Statement ::= ID ASSIGN Expression SEMICOLON" ); :}
             | ID ASSIGN Expression error
-            {: System.out.println( "! Greska ! u liniji " + parser.getLine() + ": " + "Nedostaje ';'"); parser.errNo++; :}
+            {: System.out.println(  "-> Greska u liniji " + parser.getLine() + ": " + "Nedostaje ';'"); parser.errNo++; :}
             | ID ASSIGN error
-            {: System.out.println( "! Greska ! u liniji " + parser.getLine() + ": " + "Potreban je izraz sa desne strane ':=' simbola."); parser.errNo++; :}
+            {: System.out.println(  "-> Greska u liniji " + parser.getLine() + ": " + "Potreban je izraz sa desne strane ':=' simbola."); parser.errNo++; :}
             | Block 
             {: System.out.println( "Redukcija 16: Statement ::= Block " ); :};
 
@@ -138,11 +138,11 @@ Statement ::= SelectStatement
 SelectStatement ::= SELECT BEGIN CaseList END 
             {: System.out.println( "Redukcija 17: SelectStatement ::= SELECT BEGIN CaseList END " ); :}
             | SELECT BEGIN CaseList error 
-            {: System.out.println( "! Greska ! u liniji " + parser.getLine() + ": " + "Nezavrsen 'select' izraz (nedostaje kljucna rec 'end')."); parser.errNo++; :}
+            {: System.out.println(  "-> Greska u liniji " + parser.getLine() + ": " + "Nezavrsen 'select' izraz (nedostaje kljucna rec 'end')."); parser.errNo++; :}
             | SELECT BEGIN error 
-            {: System.out.println( "! Greska ! u liniji " + parser.getLine() + ": " + "Nevalidan slucaj u 'select' izrazu."); parser.errNo++; :}
+            {: System.out.println(  "-> Greska u liniji " + parser.getLine() + ": " + "Nevalidan slucaj u 'select' izrazu."); parser.errNo++; :}
             | SELECT error 
-            {: System.out.println( "! Greska ! u liniji " + parser.getLine() + ": " + "Lose zapocet 'select' izraz (nedostaje kljucna rec 'begin')."); parser.errNo++; :};
+            {: System.out.println(  "-> Greska u liniji " + parser.getLine() + ": " + "Lose zapocet 'select' izraz (nedostaje kljucna rec 'begin')."); parser.errNo++; :};
 
 //------------------------------------------------------------------------------
 CaseList ::= CaseList Case
@@ -154,11 +154,11 @@ CaseList ::= CaseList Case
 Case ::= CASE Expression THEN Statement 
             {: System.out.println( "Redukcija 20: Case ::= CASE Expression THEN Statement " ); :}
             | CASE Expression THEN error 
-            {: System.out.println( "! Greska ! u liniji " + parser.getLine() + ": " + "Nevalidan izraz sa desne strane slucaja."); parser.errNo++; :}
+            {: System.out.println(  "-> Greska u liniji " + parser.getLine() + ": " + "Nevalidan izraz sa desne strane slucaja."); parser.errNo++; :}
             | CASE Expression error 
-            {: System.out.println( "! Greska ! u liniji " + parser.getLine() + ": " + "Nedostaje '=>'"); parser.errNo++; :}
+            {: System.out.println(  "-> Greska u liniji " + parser.getLine() + ": " + "Nedostaje '=>'"); parser.errNo++; :}
             | CASE error 
-            {: System.out.println( "! Greska ! u liniji " + parser.getLine() + ": " + "Nevalidan izraz u slucaju."); parser.errNo++; :};
+            {: System.out.println(  "-> Greska u liniji " + parser.getLine() + ": " + "Nevalidan izraz u slucaju."); parser.errNo++; :};
 
 //------------------------------------------------------------------------------
 Expression ::= Expression OR AndExpression
