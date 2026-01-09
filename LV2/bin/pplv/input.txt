@@ -1,0 +1,11 @@
+select
+begin
+    case a => 1
+    case b => 2
+    case c =>
+    select begin
+        case x => 10 
+        case y => 20 
+    end
+    case d => 99
+end

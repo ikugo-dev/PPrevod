@@ -1,0 +1,4 @@
+select begin
+    case x => a := 4;
+    case y => a := 2;
+end

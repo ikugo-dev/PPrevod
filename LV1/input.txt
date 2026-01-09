@@ -1,0 +1,17 @@
+program
+begin
+    var x, y, z:integer;
+    var c:char
+    var b:boolean;
+    b := true;
+    select begin
+        case x < 10 => 
+            begin
+                var tmp:real;
+                y := (x);
+            end
+        case x >= 10 and b == true =>
+            c := 'A';
+    end
+    x := y or 1;
+end
