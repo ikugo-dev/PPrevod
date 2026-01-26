@@ -95,7 +95,7 @@ Declaration ::= NameList COLON Type SEMICOLON
             {: System.out.println(  "-> Greska u liniji " + parser.getLine() + ": " + "Nedostaje ';'."); parser.errNo++; :}
             | NameList COLON error  
             {: System.out.println(  "-> Greska u liniji " + parser.getLine() + ": " + "Nedostaje tip promenjive."); parser.errNo++; :}
-            | NameList error  
+            | NameList error
             {: System.out.println(  "-> Greska u liniji " + parser.getLine() + ": " + "Nedostaje ',' ili ':'."); parser.errNo++; :};
 
 //------------------------------------------------------------------------------

@@ -1,6 +1,6 @@
 program
 begin
-    x, y, z : integer ;
+    x, y, z:
     c:char;
     b:boolean;
     b := true;
@@ -11,7 +11,7 @@ begin
                 y := (x);
             end
         case x >= 10 and b == true =>
-            c 'A';
+            c := 'A'
     end
-    x := y or 1
+    x := y or 1;
 end.

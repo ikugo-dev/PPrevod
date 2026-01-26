@@ -1,0 +1,131 @@
+import java_cup.runtime.*;
+import java.io.*;
+import java.util.ArrayList;
+import SymbolTable.*;
+
+parser code {:
+   SymbolTable symbolTable;
+
+   public static void main( String[] args )
+   {
+      try
+	  {
+		   FileReader file = new FileReader( args[0] );
+		   Scanner scanner = new Lexer( file );
+		   Parser parser = new Parser( scanner );
+		   parser.parse();
+	  }
+	  catch( Exception e )
+	  {
+		   e.printStackTrace();
+	  }
+   }
+:}
+
+init with {:
+	symbolTable = new SymbolTable();
+:}
+
+terminal String STARTTAG, ENDTAG, TEXT;
+
+nonterminal HTMLElement Element;
+nonterminal HTMLElement Content;
+nonterminal ArrayList<HTMLElement> ElementList; 
+
+
+Element ::= STARTTAG : start  Content : content ENDTAG : end
+          {:
+              // 1. semantičko pravilo 
+              if (!start.equals(end)) {
+                 System.out.println( "Početni tag " + start + " se ne slaže sa završnim tagom " + end + ". " );
+              }
+              else {
+                 // 2. semantičko pravilo
+                 if (start.equals("table")) {
+                    // provera da li je content lista HTML elemenata ili običan tekst
+                    if (content.childElements != null) {
+                       for (int i = 0; i < content.childElements.size(); i++) {
+                          HTMLElement row = content.childElements.get(i);
+                          if (!row.name.equals("tr")) {
+                             System.out.println( "Tabela treba da sadrži isključivo elemente tipa tr. " );
+                          }
+                          // 5. semantičko pravilo
+                          else if (i != 0) {
+                             // Već smo proverili trećim pravilom da tr sadrži samo th ili td elemente
+                             // (prvo se niz td i th elemenata redukuje na jedan tr element pa zatim
+                             // se niz tr elemenata redukuje na jedan table element).  
+                             // Vrsta sa indeksom 0 sme da sadrži th na bilo kojoj poziciji pa nju 
+                             // ne proveravamo. Ostale tr vrste mogu da sadrže th element isključivo na 
+                             // poziciji 0 (prva kolona tabele). 
+                             for (int j = 1; j < row.childElements.size(); j++) {
+                                if (row.childElements.get(j).name.equals("th"))
+                        		   System.out.println( "Element th može biti samo u prvoj vrsti ili prvoj koloni. " );
+                             }
+                          }
+                       } 
+                    }
+                    else
+                       System.out.println( "Tabela može da sadrži isključivo listu elemenata tipa tr. " );
+                 }
+                 // 3. semantičko pravilo
+                 else if (start.equals("tr")) {
+                    // provera da li je content lista HTML elemenata ili običan tekst
+                    if (content.childElements != null) {
+                       for (HTMLElement element : content.childElements) {
+                          if (!element.name.equals("th") && !element.name.equals("td")) {
+                             System.out.println( "Element tr treba da sadrži isključivo elemente tipa th ili td. " );
+                          }
+                       } 
+                    }
+                    else
+                       System.out.println( "Element tr treba da sadrži isključivo elemente tipa th ili td. " );
+                 }
+                 // 4. semantičko pravilo
+                 else if (start.equals("td")) {
+                    // provera da li je content lista HTML elemenata ili običan tekst
+                    if (content.childElements != null) {
+                       System.out.println( "Element td treba da sadrži isključivo običan tekst. " );
+                    }
+                 }
+                 else if (start.equals("th")) {
+                    // provera da li je content lista HTML elemenata ili običan tekst
+                    if (content.childElements != null) {
+                       System.out.println( "Element th treba da sadrži isključivo običan tekst. " );
+                    }
+                 }
+              }
+              RESULT = content;
+              RESULT.name = start;
+          :}
+          | STARTTAG : start  Content : content error
+          {:
+             System.out.println( "Nedostaje završni tag za " + start + ". " );
+          :}
+          | STARTTAG : start  error
+          {:
+             System.out.println( "Nedostaje sadržaj taga " + start + ". " );
+          :}
+          ;
+          
+Content ::= TEXT : text
+          {:
+             RESULT = new HTMLElement(text); 
+          :}  
+          | ElementList : list
+          {:
+             RESULT = new HTMLElement(list); 
+          :}
+          ;
+          
+ElementList ::= ElementList : list Element : element
+              {:
+                   list.add(element);
+                   RESULT = list; 
+              :}
+              | Element : element
+              {:
+                   RESULT = new ArrayList<HTMLElement>();
+                   RESULT.add(element); 
+              :}
+              ;
+              

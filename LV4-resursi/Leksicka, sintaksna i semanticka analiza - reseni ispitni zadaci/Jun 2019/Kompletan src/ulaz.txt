@@ -1,0 +1,23 @@
+<table> 
+   <tr>
+      <th>
+         tekst
+      </th> 
+   </tr>
+   <tr>
+      <th>
+         tekst
+      </th>
+      <td>
+         tekst
+      </td> 
+   </tr>
+   <tr>
+      <th>
+         tekst
+      </th>
+      <td>
+         tekst
+      </td> 
+   </tr>
+</table>

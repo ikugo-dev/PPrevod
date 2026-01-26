@@ -1,0 +1,154 @@
+import java_cup.runtime.*;
+import java.io.*;
+import java.util.ArrayList;
+import SymbolTable.*;
+
+parser code {:
+   SymbolTable symbolTable;
+
+   public static void main( String[] args )
+   {
+      try
+	  {
+		   FileReader file = new FileReader( args[0] );
+		   Scanner scanner = new Lexer( file );
+		   Parser parser = new Parser( scanner );
+		   parser.parse();
+	  }
+	  catch( Exception e )
+	  {
+		   e.printStackTrace();
+	  }
+   }
+:}
+
+init with {:
+	symbolTable = new SymbolTable();
+:}
+
+terminal String ID;
+terminal ENUM, DVE_TACKE, LEVA_ZAGRADA, DESNA_ZAGRADA, INT, STRING, ZAREZ;
+terminal INT_CONST, STRING_CONST; 
+
+nonterminal EnumType; 
+nonterminal Type Type; 
+nonterminal ArrayList<KonstantaSaImenom> ConstantList; 
+nonterminal KonstantaSaImenom ConstantDefinition;
+nonterminal Constant Konstanta; // ne postoji u gramatici, ali nam je potrebno dodatno 
+                      // pravilo da bismo razlikovali INT i STRING konstante       
+
+EnumType ::= ENUM ID:imeEnuma DVE_TACKE Type:tip LEVA_ZAGRADA ConstantList:lista DESNA_ZAGRADA
+           {:
+              if (parser.symbolTable.getType( imeEnuma ) != null) {
+                 System.out.println( "Tip sa nazivom " + imeEnuma + " već postoji. " );
+              }
+              for (KonstantaSaImenom element : lista) {
+                 if (element.konstanta.type.tkind != tip.tkind) {
+                    System.out.println("Tip elementa enumeracije " + element.ime 
+                    + " se razlikuje od tipa enumeracije " + tip.name);
+                 }
+              }
+           :}
+           | ENUM ID DVE_TACKE Type LEVA_ZAGRADA ConstantList error
+           {:
+              System.out.println( "Nedostaje desna zagrada." );
+           :}
+           | ENUM ID DVE_TACKE Type LEVA_ZAGRADA error
+           {:
+              System.out.println( "Nedostaje lista konstanti." );
+           :}
+           | ENUM ID DVE_TACKE Type error
+           {:
+              System.out.println( "Nedostaje leva zagrada." );
+           :}
+           | ENUM ID DVE_TACKE error
+           {:
+              System.out.println( "Nedostaje tip podataka." );
+           :}
+           | ENUM ID error
+           {:
+              System.out.println( "Nedostaje simbol :." );
+           :}
+           | ENUM error
+           {:
+              System.out.println( "Nedostaje naziv enumeracije." );
+           :}
+           | error
+           {:
+              System.out.println( "Nedostaje cela definicija enumeracije." );
+           :}
+           ;
+            
+Type ::= INT
+       {:
+          RESULT = parser.symbolTable.getType( "integer" );
+          // Da ne bismo menjali implementaciju klase SymbolTable umesto tipa podataka 
+          // "int" koristimo postojeći tip podataka "integer"
+       :}
+       | STRING
+       {:
+          RESULT = parser.symbolTable.getType( "char" );
+          // Da ne bismo menjali implementaciju klase SymbolTable umesto tipa podataka 
+          // "string" koristimo postojeći tip podataka "char"
+       :}
+       ;
+       		
+ConstantList ::= ConstantDefinition:cd
+               {:
+                  RESULT = new ArrayList<KonstantaSaImenom>();
+                  RESULT.add(cd); 
+               :}
+               | ConstantList:lista ZAREZ ConstantDefinition:cd
+               {:
+                  for (KonstantaSaImenom postojecaKonstanta : lista) {
+                     if (postojecaKonstanta.ime.equals(cd.ime)) {
+                        System.out.println("Simboličko ime " + cd.ime 
+                           + " se ponavlja u enumeraciji. ");
+                     }
+                     if (postojecaKonstanta.konstanta.value.equals(cd.konstanta.value)) {
+                        System.out.println("Vrednost konstante " + cd.konstanta.value 
+                           + " se ponavlja u enumeraciji. ");
+                     }
+                  } 
+                  lista.add(cd);
+                  RESULT = lista; 
+               :}
+               | ConstantList ZAREZ error
+               {:
+                  System.out.println( "Nedostaje definicija konstante posle zareza." );
+               :}
+               | ConstantList error
+               {:
+                  System.out.println( "Nedostaje zarez u listi konstanti." );
+               :}
+               ;
+                               
+ConstantDefinition ::= ID:ime DVE_TACKE Konstanta:konstanta
+                     {:
+                        RESULT = new KonstantaSaImenom(ime, konstanta);
+                     :}
+                     | ID DVE_TACKE error
+                     {:
+                        System.out.println( "Nedostaje konstanta posle dve tačke." );
+                     :}
+                     | ID error
+                     {:
+                        System.out.println( "Nedostaju dve tačke posle identifikatora." );
+                     :}
+                     ;
+                     
+// ne postoji u gramatici, ali nam je potrebno dodatno 
+// pravilo da bismo razlikovali INT i STRING konstante
+Konstanta ::= INT_CONST:vrednost
+           {:
+              RESULT = new Constant( parser.symbolTable.getType( "integer" ), vrednost );
+              // Da ne bismo menjali implementaciju klase SymbolTable umesto tipa podataka 
+              // "int" koristimo postojeći tip podataka "integer"
+           :}
+           | STRING_CONST:vrednost
+           {:
+              RESULT = new Constant( parser.symbolTable.getType( "char" ), vrednost );
+              // Da ne bismo menjali implementaciju klase SymbolTable umesto tipa podataka 
+              // "string" koristimo postojeći tip podataka "char"
+           :}
+           ;                      

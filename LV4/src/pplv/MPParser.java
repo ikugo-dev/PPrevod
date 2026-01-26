@@ -195,6 +195,7 @@ public class MPParser extends java_cup.runtime.lr_parser {
 
 
    public int warnNo = 0;
+   public int errorNo = 0;
    SymbolTable symbolTable;
    
    public static void main( String[] args )
@@ -206,10 +207,15 @@ public class MPParser extends java_cup.runtime.lr_parser {
            MPParser parser = new MPParser( scanner );
            parser.parse();
            parser.checkWarnings();
-		   if ( parser.warnNo == 0 )
+		   if ( parser.warnNo == 0 && parser.errorNo == 0 )
 		      System.out.println( "Analiza zavrsena. U kodu nema gresaka." );
 		   else
-		      System.out.println(" Broj upozorenja: " + parser.warnNo );
+		   {
+		      if ( parser.errorNo > 0 )
+		         System.out.println( "Broj gresaka: " + parser.errorNo );
+		      if ( parser.warnNo > 0 )
+		         System.out.println( "Broj upozorenja: " + parser.warnNo );
+		   }
       }
       catch( Exception e )
       {
@@ -225,14 +231,12 @@ public class MPParser extends java_cup.runtime.lr_parser {
       	Variable var = ( Variable ) current;
       	if ( var.last_def == -1 && var.last_use == -1 )
       	{
-      		System.out.println( "Upozorenje: Promenljiva " + var.name + 
-      			" je deklarisana, ali se nigde ne koristi." );
+      		System.out.println( "Upozorenje: Promenljiva " + var.name + " je deklarisana, ali se nigde ne koristi." );
       		warnNo++;
       	}
       	else if ( var.last_def > var.last_use )
       	{
-      		System.out.println( "Upozorenje: Vrednost dodeljena promeljivoj " +
-      		    var.name + " u liniji " + var.last_def + " se nigde ne koristi." );
+      		System.out.println( "Upozorenje: Vrednost dodeljena promeljivoj " + var.name + " u liniji " + var.last_def + " se nigde ne koristi." );
       		warnNo++;
       	}
       	current = current.next;
@@ -244,9 +248,10 @@ public class MPParser extends java_cup.runtime.lr_parser {
        
    }
    
-   public void report_error(String message, Object info)
+   public void report_error(String message, int line)
    {
-       System.out.print( message );
+       System.out.println( "Greska u liniji " + line + ": " + message );
+       errorNo++;
    }
    
    public int getLine()
@@ -353,9 +358,7 @@ class CUP$MPParser$actions {
                 System.out.println( "Redukcija 5:  Declaration ::= NameList COLON Type SEMICOLON " );
                 for ( String name : names ) {
                     if ( !parser.symbolTable.addVar( name, t ) ) {
-                        parser.report_error(
-                        "Semanticka greska: Promenljiva " + name +
-                        " je vec deklarisana (linija " + parser.getLine() + ")\n", null );
+                        parser.report_error( "Promenljiva " + name + " je vec deklarisana", parser.getLine() );
                     }
                 }
             
@@ -502,25 +505,15 @@ class CUP$MPParser$actions {
 
                 if ( var == null )
                 {
-                    parser.report_error(
-                      "Semanticka greska: Promenljiva " + name +
-                      " nije deklarisana (linija " + parser.getLine() + ")\n", null );
+                    parser.report_error( "Promenljiva " + name + " nije deklarisana", parser.getLine() );
                 }
                 else
                 {
                     Type lhs = var.type;
                     Type rhs = expr;
-                    
-                    // Debug output
-                    System.err.println("DEBUG: Assigning to " + name + 
-                                     ", lhs=" + (lhs != null ? lhs.tkind : "null") + 
-                                     ", rhs=" + (rhs != null ? rhs.tkind : "null"));
-
                     if ( !parser.isAssignable( lhs, rhs ) )
                     {
-                        parser.report_error(
-                          "Semanticka greska: Neodgovarajuci tip u dodeli (linija " +
-                          parser.getLine() + ")\n", null );
+                        parser.report_error( "Neodgovarajuci tip u dodeli", parser.getLine() );
                     }
                     else
                     {
@@ -579,9 +572,7 @@ class CUP$MPParser$actions {
                 System.out.println( "Redukcija 20: Case ::= CASE Expression THEN Statement " );
                 if ( expr.tkind != Type.BOOLEAN )
                 {
-                    parser.report_error(
-                      "Semanticka greska: CASE izraz mora biti boolean (linija "
-                      + parser.getLine() + ")\n", null );
+                    parser.report_error( "CASE izraz mora biti boolean", parser.getLine() );
                 }
             
               CUP$MPParser$result = parser.getSymbolFactory().newSymbol("Case",8, ((java_cup.runtime.Symbol)CUP$MPParser$stack.elementAt(CUP$MPParser$top-3)), ((java_cup.runtime.Symbol)CUP$MPParser$stack.peek()), RESULT);
@@ -601,9 +592,7 @@ class CUP$MPParser$actions {
 		
                 System.out.println( "Redukcija 21: Expression ::= Expression OR AndExpression" );
                 if ( left.tkind != Type.BOOLEAN || right.tkind != Type.BOOLEAN )
-                    parser.report_error(
-                      "Semanticka greska: OR zahteva boolean operande (linija "
-                      + parser.getLine() + ")\n", null );
+                    parser.report_error( "OR zahteva boolean operande", parser.getLine() );
                 RESULT = parser.symbolTable.getType("boolean");
             
               CUP$MPParser$result = parser.getSymbolFactory().newSymbol("Expression",12, ((java_cup.runtime.Symbol)CUP$MPParser$stack.elementAt(CUP$MPParser$top-2)), ((java_cup.runtime.Symbol)CUP$MPParser$stack.peek()), RESULT);
@@ -638,9 +627,7 @@ class CUP$MPParser$actions {
 		 
                 System.out.println( "Redukcija 23: AndExpression ::= AndExpression AND RelExpression" );
                 if ( left.tkind != Type.BOOLEAN || right.tkind != Type.BOOLEAN )
-                    parser.report_error(
-                      "Semanticka greska: AND zahteva boolean operande (linija "
-                      + parser.getLine() + ")\n", null );
+                    parser.report_error( "AND zahteva boolean operande", parser.getLine() );
                 RESULT = parser.symbolTable.getType("boolean");
             
               CUP$MPParser$result = parser.getSymbolFactory().newSymbol("AndExpression",13, ((java_cup.runtime.Symbol)CUP$MPParser$stack.elementAt(CUP$MPParser$top-2)), ((java_cup.runtime.Symbol)CUP$MPParser$stack.peek()), RESULT);
@@ -676,9 +663,7 @@ class CUP$MPParser$actions {
                 System.out.println( "Redukcija 25: RelExpression ::= Term RelOp Term" );
                 if ( left.tkind > Type.REAL || right.tkind > Type.REAL )
                 {
-                    parser.report_error(
-                      "Semanticka greska: Relacioni operator nad nenumerickim tipom (linija "
-                      + parser.getLine() + ")\n", null );
+                    parser.report_error( "Relacioni operator nad nenumerickim tipom", parser.getLine() );
                 }
                 RESULT = parser.symbolTable.getType("boolean");
             
@@ -839,8 +824,7 @@ class CUP$MPParser$actions {
 
                 if (var == null)
                 {
-                    parser.report_error("Semanticka greska: Promenljiva " + name +
-                         " nije deklarisana (linija " + parser.getLine() + ")\n", null);
+                    parser.report_error( "Promenljiva " + name + " nije deklarisana", parser.getLine() );
                     // Try to get unknown type, if it doesn't exist, use integer as fallback
                     Type unknownType = parser.symbolTable.getType("unknown");
                     RESULT = (unknownType != null) ? unknownType : parser.symbolTable.getType("integer");
@@ -848,8 +832,7 @@ class CUP$MPParser$actions {
                 else
                 {
                     if (var.last_def == -1)
-                        parser.report_error("Semanticka greska: Promenljiva " + name +
-                          " se koristi pre inicijalizacije (linija " + parser.getLine() + ")\n", null);
+                        parser.report_error( "Promenljiva " + name + " se koristi pre inicijalizacije", parser.getLine() );
 
                     var.last_use = parser.getLine();
                     RESULT = var.type;
